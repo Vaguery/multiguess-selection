@@ -79,7 +79,7 @@
      1 [dude2]}
       ))
 
-(fact "ranked-individuals produces a sorted series of collections, based on nondomination"
+(fact "ranked-individuals puts empty-stack dudes in the last rank"
   (let [dude1 (score-individual (->Individual 2 '() #{}) 3)
         dude2 (score-individual (->Individual 1 '(0 1 2) #{}) 3)]
     (ranked-individuals [dude1, dude2]) =>
