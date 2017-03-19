@@ -196,6 +196,8 @@ But there is also room in each layer for mutually non-dominated guessers. Look a
 
 ## concerns
 
+### complicated?
+
 There seems to be an awful lot of extra computational work going on here. Determining the sets of vectors, comparing between them, recursively removing "layers"... it all feels like it will add up. Is the expense worth the trouble?
 
 That depends.
@@ -204,9 +206,29 @@ For problems traditionally called "easy", of course not. But realize that those 
 
 Dunno.
 
+### easy to fool?
+
 You might be concerned that there is an implicit bias here to select for "lots of guesses". That is, for programs that produce a big pile of stack items, in hopes of hitting it big with a lucky guess. But think this through: If these numbers are _random_, then they can't hold up to repeated scrutiny. And if they're _arbitrary_, then there's no way for them to be "lucky" unless that luck contains at least a little bit of a model of the target distribution... at least under evolutionary selection. It seems like these "multi-guess" approaches are no more prone to "cheating" than traditional approaches are prone to evolving solutions that "guess the right answer".
 
 You'll recall that I said not to worry about _when_ a value appears on the stack, the "third" implicit objective of the traditional approach. In this example, I've just elided that. The same approach can make selection "even more gentle", by moving from `[depth error]` vectors to three-dimensional `[depth last-appearance error]` vectors. Here `last-appearance` represents that program execution step _before_ the "deadline" where a given value past appeared. So for example if a program gets the right answer on the next-to-last step _but then deletes it_, there can be selection pressure brought to bear to "fix the reversion bug" if the "right" value can be seen in the history of the salient stack.
+
+### harder to map to traditional "fitness" scoring?
+
+One valid concern with this sort of approach: I've been speaking about comparing programs on the basis of a _single_ training case, for example of the sort one uses for Lexicase selection. It's difficult to see a good way to map this to more traditional aggregated fitness scores. What's the "average" of a bunch of potentially incommensurable guesses?
+
+Well... good question!
+
+I don't have a lot of ideas. Maybe... use as an aggregated score some function of the _rank_ of the program, measured for each training case? Then aggregate those in the normal way, by adding or averaging or taking a `max`?
+
+`/shrug`
+
+### hard for classifiers and other small response spaces
+
+A more tricky concern involves problems that have a limited or unordered response space. For example, if we're evolving a classifier function, a stack of `:boolean` values very quickly gets _all_ the possible answers (`true` and `false`) in the first few items. It seems pretty clear that in situations where the "top" `:boolean` is our program's "answer", adding more "guesses" might flatten the landscape a bit too much for search to work. After all, there's bound to be a `true` somewhere in the top dozen `:boolean` values, one assumes.
+
+There are a few ways we might work around this. We might redefine the goal to be some derived relationship: I've evolved classifiers (and neural networks in much the same way) where the classification output is determined by a numerical value and a threshold. That is, if (for example) if the top `:integer` is greater than the second one (the cutoff), the result is interpreted as `true`, otherwise it is `false`. This opens the possibility of taking the top _two_ items from `:integer` as a single "guess", the pair of second and third as another guess, and so on. Any program that lacks two or more items on `:integer` can be said not to have "guessed" at all, and so on.
+
+But it feels like a kludge, one has to admit.
 
 ## Related things
 
