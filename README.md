@@ -62,13 +62,13 @@ And (for completeness), does `[1 2]` dominate `[1 2]`? No. Both `(1 ≤ 1)` and
 So looking at our example of six numbers above, which are _non-dominated_ with respect to all the others?
 
 ~~~ text
-value  |error|   depth     dominated by
-7         3        0       -
-2         8        1       7
-3         7        2       7
-1         9        3       7,2,3
-0        10        4       7,2,3,1
-11        1        5       -
+value   depth   |error|    dominated by
+7         0        3       -
+2         1        8       7
+3         2        7       7
+1         3        9       7,2,3
+0         4       10       7,2,3,1
+11        5        1       -
 ~~~
 
 That is, the nondominated values in this stack `'(7 2 3 1 0 11)` are `7` and `11`. All the others have `[depth error]` vectors that are dominated by at least one other number's `[depth error]` vector.
@@ -79,7 +79,7 @@ Suppose we call _all_ the numbers in the `:integer` stack at the time we check "
 
 Record this program's best guesses as `#{[0 3] [5 1]}`. I don't really care about their order, so I've put them in a Clojure `set` here.
 
-If you think about it, as long as there's an number at all on the `:intger` stack, the first number present will be one of that program's best guesses. No other value can have a smaller `depth`, after all, so it will certainly be nondominated.
+If you think about it, as long as there's an number at all on the `:integer` stack, the first number present will be one of that program's best guesses. No other value can have a smaller `depth`, after all, so it will certainly be nondominated.
 
 But now, if there are deeper numbers that are closer to the target value, we may have more best guesses beyond that "top" number.
 
@@ -97,7 +97,7 @@ Here's one way (I haven't optimized the algorithm, so the purpose remains clear)
 4. go back to `2`, using only the remaining programs, repeatedly removing the "best best guessers" from each subset, until everybody is set aside
 
 
-What we've done here has produced a clear ranking of the programs: The first ones we set aside are those have which, collectively, guessed at least one _global_ nondominated number. Once we've set them aside, we repeat the process with the remaining ones; there will be a new set of "best bests" for this subset, and we can peel off another layer of the onion based on those winning guesses. And so on. Eventually, we'll be left with a tiny collection of programs where everybody has at least one "best best guess", and we're done.
+What we've done here has produced a clear ranking of the programs: The first ones we set aside are those which have, collectively, guessed at least one _global_ nondominated number. Once we've set them aside, we repeat the process with the remaining ones; there will be a new set of "best bests" for this subset, and we can peel off another layer of the onion based on those winning guesses. And so on. Eventually, we'll be left with a tiny collection of programs where everybody has at least one "best best guess", and we're done.
 
 Notice an interesting side-effect of this process: somebody else will be left in the very last pile, too. The programs with _empty_ `:integer` stacks will never have made any guesses at all, so they'll be automatically included in the lowest rank.
 
@@ -111,71 +111,71 @@ That is, all 20 individuals are given `best-guesses` sets, based on how deep the
 
 ~~~ clojure
 {0 [
-  {:genome 10,
+  {:genome 1,
     :guesses #{[0 810] [1 648] [2 69] [3 5]},
     :stack (823 661 82 18 849)}
-  {:genome 64,
+  {:genome 2,
     :guesses #{[0 88] [3 15]},
     :stack (101 690 736 28 53)}],
 1 [
-  {:genome 55,
+  {:genome 3,
     :guesses #{[0 362] [1 119]},
     :stack (375 132 871 414 554 667 272 567)}
-  {:genome 55,
+  {:genome 4,
     :guesses #{[0 135] [2 110] [7 11]},
     :stack (148 457 123 636 593 601 416 2 642)}
-  {:genome 49,
+  {:genome 5,
     :guesses #{[0 240] [5 106]},
     :stack (253 315 392 959 344 119 958 910)}],
 2 [
-  {:genome 22,
+  {:genome 6,
     :guesses #{[0 841] [1 387] [7 98]},
     :stack (854 400 400 901 489 859 972 111 584)}
-  {:genome 19,
+  {:genome 7,
     :guesses #{[0 867] [1 787] [3 560] [4 150]},
     :stack (880 800 925 573 163 574 849 819)}
-  {:genome 47,
+  {:genome 8,
     :guesses #{[0 201]},
     :stack (214 724 644)}
-  {:genome 39,
+  {:genome 9,
     :guesses #{[0 653] [1 295] [2 151]},
     :stack (666 308 164 242 346 791 860)}
-  {:genome 36,
+  {:genome 10,
     :guesses #{[0 662] [1 163]},
     :stack (675 176 744 664 354 587)}],
 3 [
-  {:genome 27,
+  {:genome 11,
     :guesses #{[0 290]},
     :stack (303 527)}
-  {:genome 40,
+  {:genome 12,
     :guesses #{[0 873] [2 472] [4 469] [6 259] [7 223]},
     :stack (886 983 485 952 482 846 272 236 474)}],
 4 [
-  {:genome 66,
+  {:genome 13,
     :guesses #{[0 336]},
     :stack (349 462 460)}],
 5 [
-  {:genome 93,
+  {:genome 14,
     :guesses #{[0 439]},
     :stack (452 633)}
-  {:genome 37,
+  {:genome 15,
     :guesses #{[0 905] [1 481] [3 364]},
     :stack (918 494 642 377 910)}],
 6 [
-  {:genome 15,
+  {:genome 16,
     :guesses #{[0 895] [1 625] [3 413]},
     :stack (908 638 758 426 767)}
-  {:genome 78,
+  {:genome 17,
     :guesses #{[0 636]},
     :stack (649)}
-  {:genome 27,
+  {:genome 18,
     :guesses #{[0 743] [2 465]},
     :stack (756 959 478)}],
 7 [
-  {:genome 55,
+  {:genome 19,
     :guesses #{},
     :stack ()}
-  {:genome 33,
+  {:genome 20,
     :guesses #{},
     :stack ()}]}
 ~~~
@@ -186,13 +186,13 @@ The 20 `Individual` records separated into 8 layers. Let's look at the extremes 
 
 In the "lowest" layer, we see the two that had empty stacks.
 
-In the "top" layer, we see the two that had stacks containing nondominated values _over the entire collection_. The two `Individual` records here are `{:genome 10, :guesses #{[0 810] [1 648] [2 69] [3 5]}, :stack (823 661 82 18 849)}` and `{:genome 64, :guesses #{[0 88] [3 15]}, :stack (101 690 736 28 53)}`. Like I said, _within_ each individual's `:guesses`, the top item on the `:stack` appears every time. Notice that the first one of these "winners" has a `:guess` vector `[3 5]`, mapping to the `:stack` item `18` in its fourth position. The second has a `:guess` of `[0 88]`—the lowest-valued topmost number on _any_ `:stack`.
+In the "top" layer, we see the two that had stacks containing nondominated values _over the entire collection_. The two `Individual` records here are `{:genome 1, :guesses #{[0 810] [1 648] [2 69] [3 5]}, :stack (823 661 82 18 849)}` and `{:genome 2, :guesses #{[0 88] [3 15]}, :stack (101 690 736 28 53)}`. Like I said, _within_ each individual's `:guesses`, the top item on the `:stack` appears every time. Notice that the first one of these "winners" has a `:guess` vector `[3 5]`, mapping to the `:stack` item `18` in its fourth position. The second has a `:guess` of `[0 88]`—the lowest-valued topmost number on _any_ `:stack`.
 
 Makes sense, doesn't it?
 
 We should expect that each layer will include the `Individual` with the smallest value on the top of its `:stack` (compared to the remaining ones), and also an `Individual` with the smallest error remaining in _any_ position on a `:stack`. These could be the same `Individual`.
 
-But there is also room in each layer for mutually non-dominated guessers. Look at the records in layer `2` here: The one labeled `:genome 47` has the lowest-valued top number. The one labeled `:genome 22` has the lowest-valued error anywhere. The others each have reasonably-low-error, reasonably-low-depth scores, which balance one another out.
+But there is also room in each layer for mutually non-dominated guessers. Look at the records in layer `2` here: The one labeled `:genome 8` has the lowest-valued top number. The one labeled `:genome 6` has the lowest-valued error anywhere. The others each have reasonably-low-error, reasonably-low-depth scores, which balance one another out.
 
 ## concerns
 
@@ -210,7 +210,15 @@ Dunno.
 
 You might be concerned that there is an implicit bias here to select for "lots of guesses". That is, for programs that produce a big pile of stack items, in hopes of hitting it big with a lucky guess. But think this through: If these numbers are _random_, then they can't hold up to repeated scrutiny. And if they're _arbitrary_, then there's no way for them to be "lucky" unless that luck contains at least a little bit of a model of the target distribution... at least under evolutionary selection. It seems like these "multi-guess" approaches are no more prone to "cheating" than traditional approaches are prone to evolving solutions that "guess the right answer".
 
-You'll recall that I said not to worry about _when_ a value appears on the stack, the "third" implicit objective of the traditional approach. In this example, I've just elided that. The same approach can make selection "even more gentle", by moving from `[depth error]` vectors to three-dimensional `[depth last-appearance error]` vectors. Here `last-appearance` represents that program execution step _before_ the "deadline" where a given value past appeared. So for example if a program gets the right answer on the next-to-last step _but then deletes it_, there can be selection pressure brought to bear to "fix the reversion bug" if the "right" value can be seen in the history of the salient stack.
+### saving forgetful programs
+
+You'll recall that I said not to worry about _when_ (in the course of a run) a "good" value appears on the stack, the "third" implicit objective of the traditional approach. In this example, I've just elided that. The same approach I've used in this little demo can be extended to make selection "even more gentle", by moving from `[depth error]` vectors to three-dimensional `[depth last-appearance error]` vectors. Here `last-appearance` represents the number of program execution steps _before_ the "deadline" where a given value last appeared.
+
+Consider for example a program that gets the right answer on the next-to-last step... _but then deletes it_. There can be selection pressure brought to bear to "fix the reversion bug" in this situation, if the "right" value can be seen in the history of the salient stack.
+
+In other words, this approach treats every value that _ever_ appears on the salient stack as a "guess", and the "best guesses" are the numbers that appear highest on that stack, at any time point in the course of the run, and which are closest in value to the target.
+
+You may be tempted to think, "What if a good answer appears on _some other_ stack?" Why not look and see?
 
 ### harder to map to traditional "fitness" scoring?
 
@@ -218,7 +226,7 @@ One valid concern with this sort of approach: I've been speaking about comparing
 
 Well... good question!
 
-I don't have a lot of ideas. Maybe... use as an aggregated score some function of the _rank_ of the program, measured for each training case? Then aggregate those in the normal way, by adding or averaging or taking a `max`?
+I don't have a lot of ideas. Maybe we could use as an aggregated score some function of the _rank_ of the program, measured for each training case? Then aggregate those in the normal way, by adding or averaging or taking a `max`?
 
 `/shrug`
 
