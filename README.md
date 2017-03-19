@@ -105,7 +105,7 @@ Notice an interesting side-effect of this process: somebody else will be left in
 
 This repository implements a few Clojure functions that aim to make this clearer.
 
-If you look at the Midje tests, you'll see one last test that is set up to fail... but in an informative way. Here's the result of running this once, cleaned up a bit. The test is building 20 random `Individual` records, each with a random `:stack` containing a random collection of up to 20 random integers in the range `[0,100)`. We're looking at a `ranked-individuals`, given a _target_ value of `13`.
+If you look at the Midje tests, you'll [see one last test that is set up to fail](https://github.com/Vaguery/multiguess-selection/blob/master/test/multiguess_selection/core_test.clj#L93-L101)... but in an informative way. Here's the result of running this once, cleaned up a bit. The test is building 20 random `Individual` records, each with a random `:stack` containing a random collection of up to 20 random integers in the range `[0,100)`. We're looking at a `ranked-individuals`, given a _target_ value of `13`.
 
 That is, all 20 individuals are given `best-guesses` sets, based on how deep the numbers are on their stack, and how close to `13` they are. These are pooled, and the resulting subset of "winners" is extracted and labeled `0`. This process is repeated, removing "deeper" layers of `Individual` records, each of which are non-dominated within their subset.
 
@@ -210,4 +210,4 @@ You'll recall that I said not to worry about _when_ a value appears on the stack
 
 ## Related things
 
-Una-May O'Reilly and Krzysztof Krawiec have done some work with tree-based GP representations, looking at "partial solutions" present in sub-tree expressions. This work differs somewhat, just because of the different nature of Push vs tree-based GP interpreter structure. That said, the goals and sentiment are closely related: to make a "steep" landscape more amenable to gradual hill-climbing.
+ [Krzysztof Krawiec](https://scholar.google.com/scholar?q=Krzysztof+Krawiec+behavioral&btnG=&hl=en&as_sdt=0%2C23) has done extensive work with "Behavioral search" and "Pattern-guided genetic programming" (including writing a book on the former), working in both tree-based and Push-like programming languages. That work differs slightly from this, in that he tended to look at spatial patterns of partial solutions, rather than ranking solutions based on their proximity to a target location. But in practice the same notions are being explored: ways to make a rugged fitness landscape feel "smoother" for a given search algorithm and representation.
