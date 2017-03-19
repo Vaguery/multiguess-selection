@@ -36,18 +36,18 @@ But notice that `3` is _also_ on that same stack. Its absolute error is `0`, but
 What happens if we look at the _entire_ `:integer` stack, and for each value present we record its error (absolute difference from the target value), and also its depth in the stack? Let me use a slightly more complicated stack: `'(7 2 3 1 0 11)`, and suppose our target value is `10`
 
 ~~~ text
-value  |error|   depth
-7         3        0
-2         8        1
-3         7        2
-1         9        3
-0        10        4
-11        1        5
+value   depth   |error|
+7         0        3
+2         1        8
+3         2        7
+1         3        9
+0         4        10
+11        5        1
 ~~~
 
-Which of these `[error depth]` vectors is "best"? Clearly, it's the ones with the smallest error _and_ the smallest depth.
+Which of these `[depth error]` vectors is "best"? Clearly, it's the ones with the smallest error _and_ the smallest depth.
 
-In this case, there is no single `[error depth]` vector where both values are smaller than the respective values in all the other vectors.
+In this case, there is no single `[depth error]` vector where both values are smaller than the respective values in all the other vectors.
 
 Instead, let's find the nondominated vectors in this collection of six. One vector _dominates_ another, in this setting, if _both_ `error` and `depth` are at least as small, and either `error` or `depth` is strictly smaller.
 
@@ -71,13 +71,13 @@ value  |error|   depth     dominated by
 11        1        5       -
 ~~~
 
-That is, the nondominated values in this stack `'(7 2 3 1 0 11)` are `7` and `11`. All the others have `[error depth]` vectors that are dominated by at least one other number's `[error depth]` vector.
+That is, the nondominated values in this stack `'(7 2 3 1 0 11)` are `7` and `11`. All the others have `[depth error]` vectors that are dominated by at least one other number's `[depth error]` vector.
 
 ### ranking programs by their "best guesses"
 
 Suppose we call _all_ the numbers in the `:integer` stack at the time we check "guesses". And we call these two nondominated numbers in the `:integer` stack this program's "best guesses". None of the other numbers dominate these in terms of both `depth` and `error`.
 
-Record this program's best guesses as `#{[3 0] [1 5]}`. I don't really care about their order, so I've put them in a Clojure `set` here.
+Record this program's best guesses as `#{[0 3] [5 1]}`. I don't really care about their order, so I've put them in a Clojure `set` here.
 
 If you think about it, as long as there's an number at all on the `:intger` stack, the first number present will be one of that program's best guesses. No other value can have a smaller `depth`, after all, so it will certainly be nondominated.
 
