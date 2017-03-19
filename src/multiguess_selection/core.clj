@@ -87,15 +87,19 @@
 
 
 (defn ranked-individuals
-  "given a collection of Individuals, this recursively partitions the collection in 'layers' of non-dominated vs dominated. The key is the 'degree' of domination, taking each layer out in turn and recalculating"
+  "given a collection of Individuals, this recursively partitions the collection in 'layers' of non-dominated vs dominated. The key is the 'degree' of domination, taking each layer out in turn and recalculating; Individuals with empty `stack` collections are returns in the last layer"
   [individuals]
   (loop [unsorted individuals
          counter 0
          ranks {}]
-    (let [parts (extract-best-guessers unsorted)]
-      (if (empty? (get parts true))
-        (assoc ranks counter (get parts false))
-        (recur (get parts true)
-               (inc counter)
-               (assoc ranks counter (get parts false))
-               )))))
+    (let [parts (extract-best-guessers unsorted)
+          bests (get parts false)
+          not-bests (get parts true)]
+      (if (empty? not-bests)
+        (assoc ranks counter bests)
+        (if (empty? bests)
+          (assoc ranks counter not-bests)
+          (recur not-bests
+                 (inc counter)
+                 (assoc ranks counter bests)
+                 ))))))

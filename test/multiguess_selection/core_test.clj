@@ -71,20 +71,32 @@
   (best-overall-guesses []) => #{}
   )
 
+(fact "ranked-individuals produces a sorted series of collections, based on nondomination"
+  (let [dude1 (score-individual (->Individual 2 '(1 2 0) #{}) 3)
+        dude2 (score-individual (->Individual 1 '(0 1 2) #{}) 3)]
+  (ranked-individuals [dude1, dude2]) =>
+    {0 [dude1],
+     1 [dude2]}
+      ))
+
+(fact "ranked-individuals produces a sorted series of collections, based on nondomination"
+  (let [dude1 (score-individual (->Individual 2 '() #{}) 3)
+        dude2 (score-individual (->Individual 1 '(0 1 2) #{}) 3)]
+    (ranked-individuals [dude1, dude2]) =>
+      {0 [dude2],
+       1 [dude1]}
+    (ranked-individuals [dude1, dude1]) =>
+      {0 [dude1, dude1]}
+      ))
+
 
 (fact "I can rank a collection of Individuals using ranked-individuals"
   (let [pop (repeatedly 20
               #(score-individual
                 (->Individual
                   (rand-int 100)
-                  (repeatedly 20 (fn [] (rand-int 1000)))
+                  (repeatedly (rand-int 10) (fn [] (rand-int 1000)))
                   #{})
                 13))]
-    (ranked-individuals
-      [(score-individual (->Individual 1 '(0 1 2) #{}) 3)
-       (score-individual (->Individual 2 '(1 2 0) #{}) 3)]) => {0
-            [{:genome 2, :guesses #{[0 2] [1 1]}, :stack '(1 2 0)}],
-          1
-            [{:genome 1, :guesses #{[0 3] [1 2] [2 1]}, :stack '(0 1 2)}]}
     (ranked-individuals pop) => 99 ;; intentional fail
     ))
